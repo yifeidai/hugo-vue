@@ -1,0 +1,22 @@
+{{ define "body" }}
+  {{ if .Params.injecthostsdata }}
+    <script>
+      window._hugo = window._hugo || {}
+      _hugo.hosts = JSON.parse({{ .Site.Data.config | jsonify }})
+      _hugo.hostInfo = {}
+
+      {{ range $platform := .Site.Data.config }}
+        {{ range $section := $platform.sections }}
+          {{ range $name := $section.hosts }}
+            {{ with $.GetPage (path.Join "/hosts" $name) }}
+              {
+                const o =_hugo.hostInfo["{{ $name }}"] = {}
+                o.title = "{{ .Title }}"
+              }
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </script>
+  {{ end }}
+{{ end }}
